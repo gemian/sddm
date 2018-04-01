@@ -193,6 +193,12 @@ namespace SDDM {
                 return false;
             }
             QByteArray displayNumber = readPipe.readLine();
+            if (displayNumber.isEmpty()) {
+                // the file descriptor was closed without a display number,
+                // the X has probably died.
+                close(pipeFds[0]);
+                return false;
+            }
             displayNumber.prepend(QByteArray(":"));
             displayNumber.remove(displayNumber.size() -1, 1); //trim trailing whitespace
             m_display = QString::fromLocal8Bit(displayNumber);
