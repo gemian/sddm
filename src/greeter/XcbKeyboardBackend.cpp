@@ -153,7 +153,7 @@ namespace SDDM {
         cookie = xcb_xkb_get_names(m_conn,
                 XCB_XKB_ID_USE_CORE_KBD,
                 XCB_XKB_NAME_DETAIL_GROUP_NAMES | XCB_XKB_NAME_DETAIL_SYMBOLS);
-        reply = xcb_xkb_get_names_reply(m_conn, cookie, nullptr);
+        reply = xcb_xkb_get_names_reply(m_conn, cookie, &error);
 
         if (error) {
             // Log and disable
@@ -267,7 +267,7 @@ namespace SDDM {
     }
 
     QList<QString> XcbKeyboardBackend::parseShortNames(QString text) {
-        QRegExp re(QStringLiteral(R"(\+([a-z]+))"));
+        QRegExp re(QStringLiteral(R"(\+([a-z]+)(_vndr\/([a-z]+)\(([a-z]+)\))*)"));
         re.setCaseSensitivity(Qt::CaseInsensitive);
 
         QList<QString> res;
@@ -277,8 +277,13 @@ namespace SDDM {
         // Loop through matched substrings
         int pos = 0;
         while ((pos = re.indexIn(text, pos)) != -1) {
-            if (!blackList.contains(re.cap(1)))
-                res << re.cap(1);
+            if (!blackList.contains(re.cap(1))) {
+                if (re.cap(4).length() > 0) {
+                    res << re.cap(4);
+                } else {
+                    res << re.cap(1);
+                }
+            }
             pos += re.matchedLength();
         }
         return res;
