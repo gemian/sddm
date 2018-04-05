@@ -28,7 +28,6 @@
 #include <QSocketNotifier>
 
 #include <X11/XKBlib.h>
-#include <curses.h>
 
 namespace SDDM {
     XcbKeyboardBackend::XcbKeyboardBackend(KeyboardModelPrivate *kmp) : KeyboardBackend(kmp) {
