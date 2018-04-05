@@ -20,6 +20,7 @@ file(GLOB ELARUN_IMGS "elarun/images/*")
 foreach(ELARUN_IMG ${ELARUN_IMGS})
     file(COPY "${ELARUN_IMG}" DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/debian-elarun/images/")
 endforeach(ELARUN_IMG)
+
 set(THEMES elarun maldives maya maui debian-maui debian-elarun)
 
 foreach(THEME ${THEMES})
