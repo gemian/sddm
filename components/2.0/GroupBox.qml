@@ -27,15 +27,15 @@ import QtQuick 2.0
 ComboBox {
     id: combo
 
-    model: keyboard.layouts
-    index: keyboard.currentLayout
+    model: keyboard.groups
+    index: keyboard.currentGroup
 
-    onValueChanged: keyboard.currentLayout = id
+    onValueChanged: keyboard.currentGroup = id
 
     Connections {
         target: keyboard
 
-        onCurrentLayoutChanged: combo.index = keyboard.currentLayout
+        onCurrentLayoutChanged: combo.index = keyboard.currentGroup
     }
 
     rowDelegate: Rectangle {

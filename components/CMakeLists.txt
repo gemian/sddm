@@ -1,4 +1,5 @@
 configure_file("${COMPONENTS_VERSION}/LayoutBox.qml" "${COMPONENTS_VERSION}/LayoutBox.qml")
+configure_file("${COMPONENTS_VERSION}/GroupBox.qml" "${COMPONENTS_VERSION}/GroupBox.qml")
 configure_file("common/qmldir" "common/qmldir")
 
 install(DIRECTORY "${COMPONENTS_VERSION}/" DESTINATION "${QT_IMPORTS_DIR}/SddmComponents")

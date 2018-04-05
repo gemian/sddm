@@ -6,6 +6,7 @@ Clock           ${COMPONENTS_VERSION} Clock.qml
 ComboBox        ${COMPONENTS_VERSION} ComboBox.qml
 ImageButton     ${COMPONENTS_VERSION} ImageButton.qml
 LayoutBox       ${COMPONENTS_VERSION} LayoutBox.qml
+GroupBox        ${COMPONENTS_VERSION} GroupBox.qml
 Menu            ${COMPONENTS_VERSION} Menu.qml
 PasswordBox     ${COMPONENTS_VERSION} PasswordBox.qml
 PictureBox      ${COMPONENTS_VERSION} PictureBox.qml

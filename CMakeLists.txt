@@ -92,6 +92,9 @@ find_package(XCB REQUIRED)
 # XKB
 find_package(XKB REQUIRED)
 
+# X11
+find_package(X11 REQUIRED)
+
 # Qt 5
 find_package(Qt5 5.6.0 CONFIG REQUIRED Core DBus Gui Qml Quick LinguistTools)
 
@@ -143,6 +146,7 @@ if(SYSTEMD_FOUND)
     endif()
 
     set(MINIMUM_VT 7)
+    set(SLEEP_COMMAND "xset dpms force off; echo mem > /sys/power/state")
     set(HALT_COMMAND "/bin/systemctl poweroff")
     set(REBOOT_COMMAND "/bin/systemctl reboot")
 else()
@@ -161,6 +165,7 @@ if(ELOGIND_FOUND)
     set(CMAKE_AUTOMOC_MOC_OPTIONS -DHAVE_ELOGIND)
 
     set(MINIMUM_VT 7)
+    set(SLEEP_COMMAND "/usr/bin/loginctl suspend")
     set(HALT_COMMAND "/usr/bin/loginctl poweroff")
     set(REBOOT_COMMAND "/usr/bin/loginctl reboot")
 endif()
@@ -169,6 +174,7 @@ add_feature_info("elogind" ELOGIND_FOUND "elogind support")
 # Default behaviour if neither systemd nor elogind is used
 if (NOT ELOGIND_FOUND AND NOT SYSTEMD_FOUND)
     set(MINIMUM_VT 7)
+    set(SLEEP_COMMAND "/sbin/pm-suspend")
     set(HALT_COMMAND "/sbin/shutdown -h -P now")
     set(REBOOT_COMMAND "/sbin/shutdown -r now")
 endif()

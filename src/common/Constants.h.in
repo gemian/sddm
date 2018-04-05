@@ -42,6 +42,7 @@
 #define UID_MIN                     @UID_MIN@
 #define UID_MAX                     @UID_MAX@
 
+#define SLEEP_COMMAND "@SLEEP_COMMAND@"
 #define HALT_COMMAND "@HALT_COMMAND@"
 #define REBOOT_COMMAND "@REBOOT_COMMAND@"
 

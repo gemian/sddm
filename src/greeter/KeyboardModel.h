@@ -40,6 +40,10 @@ namespace SDDM {
         Q_PROPERTY(int currentLayout READ currentLayout WRITE setCurrentLayout NOTIFY currentLayoutChanged)
         Q_PROPERTY(QList<QObject*> layouts READ layouts NOTIFY layoutsChanged)
 
+        // Groups control
+        Q_PROPERTY(int currentGroup READ currentGroup WRITE setCurrentGroup NOTIFY currentGroupChanged)
+        Q_PROPERTY(QList<QObject*> groups READ groups NOTIFY groupsChanged)
+
         Q_PROPERTY(bool enabled READ enabled CONSTANT)
 
     public:
@@ -53,6 +57,9 @@ namespace SDDM {
         void currentLayoutChanged();
         void layoutsChanged();
 
+        void currentGroupChanged();
+        void groupsChanged();
+
     public slots:
         bool numLockState() const;
         void setNumLockState(bool state);
@@ -63,6 +70,10 @@ namespace SDDM {
         QList<QObject*> layouts() const;
         int currentLayout() const;
         void setCurrentLayout(int id);
+
+        QList<QObject*> groups() const;
+        int currentGroup() const;
+        void setCurrentGroup(int id);
 
         bool enabled() const;
 

@@ -39,6 +39,7 @@ namespace SDDM {
         void init() override;
         void disconnect() override;
         void sendChanges() override;
+        void sendLayoutChange() override;
         void dispatchEvents() override;
 
         void connectEventsDispatcher(KeyboardModel *model) override;
@@ -50,6 +51,7 @@ namespace SDDM {
         void connectToDisplay();
         void initLedMap();
         void initLayouts();
+        void initGroups();
         void initState();
 
         // Helpers

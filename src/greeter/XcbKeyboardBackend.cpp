@@ -27,6 +27,14 @@
 
 #include <QSocketNotifier>
 
+#include <X11/Xlib.h>
+#include <X11/Xos.h>
+#include <X11/XKBlib.h>
+#include <X11/extensions/XKBfile.h>
+#include <X11/extensions/XKBconfig.h>
+#include <X11/extensions/XKBrules.h>
+#include <curses.h>
+
 namespace SDDM {
     XcbKeyboardBackend::XcbKeyboardBackend(KeyboardModelPrivate *kmp) : KeyboardBackend(kmp) {
     }
@@ -40,6 +48,8 @@ namespace SDDM {
             initLedMap();
         if (d->enabled)
             initLayouts();
+        if (d->enabled)
+            initGroups();
         if (d->enabled)
             initState();
     }
@@ -64,7 +74,7 @@ namespace SDDM {
                     mask_full,
                     mask_cur,
                     1,
-                    d->layout_id,
+                    d->group_id,
                     0, 0, 0);
         error = xcb_request_check(m_conn, cookie);
 
@@ -79,8 +89,8 @@ namespace SDDM {
         xcb_generic_error_t *error = nullptr;
 
         m_conn = xcb_connect(nullptr, nullptr);
-        if (m_conn == nullptr) {
-            qCritical() << "xcb_connect failed, keyboard extension disabled";
+        if (m_conn == nullptr || xcb_connection_has_error(m_conn) > 0) {
+            qCritical() << "xcb_connect failed, keyboard extension disabled: " << xcb_connection_has_error(m_conn);
             d->enabled = false;
             return;
         }
@@ -145,6 +155,28 @@ namespace SDDM {
     }
 
     void XcbKeyboardBackend::initLayouts() {
+        d->layouts << new KeyboardLayout(QLatin1String("aa"), QLatin1String("Set by X"));
+        d->layouts << new KeyboardLayout(QLatin1String("gb"), QLatin1String("Gemini English (UK)"));
+        d->layouts << new KeyboardLayout(QLatin1String("us"), QLatin1String("Gemini English (US)"));
+        d->layouts << new KeyboardLayout(QLatin1String("se"), QLatin1String("Gemini Swedish"));
+        d->layouts << new KeyboardLayout(QLatin1String("fi"), QLatin1String("Gemini Finnish"));
+        d->layouts << new KeyboardLayout(QLatin1String("de"), QLatin1String("Gemini German"));
+        d->layouts << new KeyboardLayout(QLatin1String("at"), QLatin1String("Gemini Austrian"));
+        d->layouts << new KeyboardLayout(QLatin1String("fr"), QLatin1String("Gemini French"));
+        d->layouts << new KeyboardLayout(QLatin1String("be"), QLatin1String("Gemini Belgian"));
+        d->layouts << new KeyboardLayout(QLatin1String("pt"), QLatin1String("Gemini Portuguese"));
+        d->layouts << new KeyboardLayout(QLatin1String("ru"), QLatin1String("Gemini Russia"));
+        d->layouts << new KeyboardLayout(QLatin1String("jp"), QLatin1String("Gemini Japan"));
+        d->layouts << new KeyboardLayout(QLatin1String("ara"), QLatin1String("Gemini Arabic"));
+        d->layouts << new KeyboardLayout(QLatin1String("cz"), QLatin1String("Gemini Czech"));
+        d->layouts << new KeyboardLayout(QLatin1String("hr"), QLatin1String("Gemini Croatian"));
+        d->layouts << new KeyboardLayout(QLatin1String("no"), QLatin1String("Gemini Norwegian"));
+        d->layouts << new KeyboardLayout(QLatin1String("dk"), QLatin1String("Gemini Danish"));
+        d->layouts << new KeyboardLayout(QLatin1String("dvorak"), QLatin1String("Gemini English (Dvorak)"));
+        d->layouts << new KeyboardLayout(QLatin1String("gr"), QLatin1String("Gemini Greek"));
+    }
+
+    void XcbKeyboardBackend::initGroups() {
         xcb_xkb_get_names_cookie_t cookie;
         xcb_xkb_get_names_reply_t *reply = nullptr;
         xcb_generic_error_t *error = nullptr;
@@ -157,7 +189,7 @@ namespace SDDM {
 
         if (error) {
             // Log and disable
-            qCritical() << "Can't init layouts: " << error->error_code;
+            qCritical() << "Can't init groups: " << error->error_code;
             return;
         }
 
@@ -168,11 +200,15 @@ namespace SDDM {
                 reply->virtualMods, reply->groupNames, reply->nKeys, reply->nKeyAliases,
                 reply->nRadioGroups, reply->which, &res_list);
 
-        // Get short names
-        QList<QString> short_names = parseShortNames(atomName(res_list.symbolsName));
+        // Get short names & store initial x11 value
+        QString x11Symbols = atomName(res_list.symbolsName);
+        QList<QString> short_names = parseShortNames(x11Symbols);
+        if (d->x11Symbols.length() == 0) {
+            d->x11Symbols = x11Symbols;
+        }
 
         // Loop through group names
-        d->layouts.clear();
+        d->groups.clear();
         int groups_cnt = xcb_xkb_get_names_value_list_groups_length(reply, &res_list);
 
         QList<xcb_get_atom_name_cookie_t> cookies;
@@ -185,7 +221,8 @@ namespace SDDM {
             if (i < short_names.length())
                 nshort = short_names[i];
 
-            d->layouts << new KeyboardLayout(nshort, nlong);
+            qCritical() << nshort << nlong;
+            d->groups << new KeyboardLayout(nshort, nlong);
         }
 
         // Free
@@ -206,8 +243,8 @@ namespace SDDM {
             d->capslock.enabled = reply->lockedMods & d->capslock.mask;
             d->numlock.enabled  = reply->lockedMods & d->numlock.mask;
 
-            // Set current layout
-            d->layout_id = reply->group;
+            // Set current layout group
+            d->group_id = reply->group;
 
             // Free
             free(reply);
@@ -290,9 +327,10 @@ namespace SDDM {
     }
 
     void XcbKeyboardBackend::dispatchEvents() {
-        // Pool events
+        // Poll events
         while (xcb_generic_event_t *event = xcb_poll_for_event(m_conn)) {
             // Check event types
+            qCritical() << "dispatchEvents - rt: " << event->response_type << ", pad0: " << event->pad0;
             if (event->response_type != 0 && event->pad0 == XCB_XKB_STATE_NOTIFY) {
                 xcb_xkb_state_notify_event_t *e = (xcb_xkb_state_notify_event_t *)event;
 
@@ -300,10 +338,13 @@ namespace SDDM {
                 d->capslock.enabled = e->lockedMods & d->capslock.mask;
                 d->numlock.enabled  = e->lockedMods & d->numlock.mask;
 
-                d->layout_id = e->group;
+                qCritical() << "group " << e->group;
+                d->group_id = e->group;
             } else if (event->response_type != 0 && event->pad0 == XCB_XKB_NEW_KEYBOARD_NOTIFY) {
-                // Keyboards changed, reinit layouts
-                initLayouts();
+                // Keyboards changed, re-init groups
+                initGroups();
+            } else if (event->response_type != 0 && event->pad0 == XCB_XKB_MAP_NOTIFY) {
+                qCritical() << "MapNotify";
             }
             free(event);
         }
@@ -316,8 +357,8 @@ namespace SDDM {
         xcb_generic_error_t *error = nullptr;
 
         cookie = xcb_xkb_select_events(m_conn, XCB_XKB_ID_USE_CORE_KBD,
-                XCB_XKB_EVENT_TYPE_STATE_NOTIFY | XCB_XKB_EVENT_TYPE_NEW_KEYBOARD_NOTIFY, 0,
-                XCB_XKB_EVENT_TYPE_STATE_NOTIFY | XCB_XKB_EVENT_TYPE_NEW_KEYBOARD_NOTIFY, 0, 0, &foo);
+                XCB_XKB_EVENT_TYPE_STATE_NOTIFY | XCB_XKB_EVENT_TYPE_NEW_KEYBOARD_NOTIFY | XCB_XKB_EVENT_TYPE_MAP_NOTIFY, 0,
+                XCB_XKB_EVENT_TYPE_STATE_NOTIFY | XCB_XKB_EVENT_TYPE_NEW_KEYBOARD_NOTIFY | XCB_XKB_EVENT_TYPE_MAP_NOTIFY, 0, 0, &foo);
         // Check errors
         error = xcb_request_check(m_conn, cookie);
         if (error) {
@@ -329,10 +370,52 @@ namespace SDDM {
         // Flush connection
         xcb_flush(m_conn);
 
-        // Get file descripor and init socket listener
+        // Get file descriptor and init socket listener
         int fd = xcb_get_file_descriptor(m_conn);
         m_socket = new QSocketNotifier(fd, QSocketNotifier::Read);
 
         QObject::connect(m_socket, SIGNAL(activated(int)), model, SLOT(dispatchEvents()));
+    }
+
+    void XcbKeyboardBackend::sendLayoutChange() {
+        int major, minor, why;
+        const int MAX_SYMBOLS_LEN = 100;
+        char symbolsList[MAX_SYMBOLS_LEN];
+
+        major = XkbMajorVersion;
+        minor = XkbMinorVersion;
+        Display *dpy = XkbOpenDisplay(getenv("DISPLAY"), NULL, NULL, &major, &minor, &why);
+        if (!dpy) {
+            qCritical() << "Can't open display: " << why;
+            return;
+        }
+
+        switch (d->layout_id) {
+            case 0:
+                strncpy(symbolsList, d->x11Symbols.toUtf8().data(), MAX_SYMBOLS_LEN);
+                break;
+            default:
+                snprintf(symbolsList, MAX_SYMBOLS_LEN, "pc+planet_vndr/gemini(%s)", ((KeyboardLayout*)d->layouts[d->layout_id])->shortName().toUtf8().data());
+        }
+
+        XkbComponentNamesRec cmdNames = {
+                .keymap = const_cast<char *>(""),
+                .keycodes = const_cast<char *>("evdev"),
+                .types = const_cast<char *>("complete"),
+                .compat = const_cast<char *>("complete"),
+                .symbols = symbolsList,
+                .geometry = const_cast<char *>("pc(pc104)")
+        };
+
+        XkbDescPtr xkb = XkbGetKeyboardByName(dpy, XCB_XKB_ID_USE_CORE_KBD, &cmdNames,
+                                              XkbGBN_AllComponentsMask,
+                                              XkbGBN_AllComponentsMask & (~XkbGBN_GeometryMask),
+                                              True);
+        if (!xkb)
+        {
+            qCritical() << "Error loading new keyboard description\n";
+            return;
+        }
+
     }
 }

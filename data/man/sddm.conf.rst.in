@@ -36,6 +36,10 @@ OPTIONS
 
 [General] section:
 
+`SleepCommand=`
+	Sleep command.
+	Default value is "@SLEEP_COMMAND@".
+
 `HaltCommand=`
 	Halt command.
 	Default value is "@HALT_COMMAND@".

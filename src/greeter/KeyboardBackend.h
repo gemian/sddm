@@ -33,6 +33,7 @@ namespace SDDM {
         virtual void init() = 0;
         virtual void disconnect() = 0;
         virtual void sendChanges() = 0;
+        virtual void sendLayoutChange() = 0;
         virtual void dispatchEvents() = 0;
 
         virtual void connectEventsDispatcher(KeyboardModel *model) = 0;

@@ -30,7 +30,9 @@ add_executable(sddm-greeter ${GREETER_SOURCES} ${RESOURCES})
 target_link_libraries(sddm-greeter
                       Qt5::Quick
                       ${LIBXCB_LIBRARIES}
-                      ${LIBXKB_LIBRARIES})
+                      ${LIBXKB_LIBRARIES}
+                      ${X11_LIBRARIES}
+                      )
 
 if(JOURNALD_FOUND)
     target_link_libraries(sddm-greeter ${JOURNALD_LIBRARIES})

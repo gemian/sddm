@@ -39,6 +39,13 @@ namespace SDDM {
         // Layouts
         int layout_id { 0 };
         QList<QObject*> layouts;
+
+        // Groups
+        int group_id { 0 };
+        QList<QObject*> groups;
+
+        // Original symbols
+        QString x11Symbols;
     };
 }
 

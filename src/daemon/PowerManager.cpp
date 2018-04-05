@@ -86,6 +86,10 @@ const QString UPOWER_OBJECT = QStringLiteral("org.freedesktop.UPower");
             return caps;
         }
 
+        void sleep() const {
+            QProcess::execute(mainConfig.SleepCommand.get());
+        }
+
         void powerOff() const {
             QProcess::execute(mainConfig.HaltCommand.get());
         }

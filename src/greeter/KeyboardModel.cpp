@@ -79,9 +79,26 @@ namespace SDDM {
     void KeyboardModel::setCurrentLayout(int id) {
         if (d->layout_id != id) {
             d->layout_id = id;
-            m_backend->sendChanges();
+            m_backend->sendLayoutChange();
 
             emit currentLayoutChanged();
+        }
+    }
+
+    QList<QObject*> KeyboardModel::groups() const {
+        return d->groups;
+    }
+
+    int KeyboardModel::currentGroup() const {
+        return d->group_id;
+    }
+
+    void KeyboardModel::setCurrentGroup(int id) {
+        if (d->group_id != id) {
+            d->group_id = id;
+            m_backend->sendChanges();
+
+            emit currentGroupChanged();
         }
     }
 
@@ -94,6 +111,8 @@ namespace SDDM {
         bool num_old = d->numlock.enabled, caps_old = d->capslock.enabled;
         int layout_old = d->layout_id;
         QList<QObject*> layouts_old = d->layouts;
+        int group_old = d->group_id;
+        QList<QObject*> groups_old = d->groups;
 
         // Process events
         m_backend->dispatchEvents();
@@ -110,6 +129,12 @@ namespace SDDM {
 
         if (layouts_old != d->layouts)
             emit layoutsChanged();
+
+        if (group_old != d->group_id)
+            emit currentGroupChanged();
+
+        if (groups_old != d->groups)
+            emit groupsChanged();
     }
 }
 

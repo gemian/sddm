@@ -239,13 +239,33 @@ Rectangle {
 
                 LayoutBox {
                     id: layoutBox
-                    width: 90
+                    width: 150
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: 14
 
                     arrowIcon: "angle-down.png"
 
-                    KeyNavigation.backtab: session; KeyNavigation.tab: btnShutdown
+                    KeyNavigation.backtab: session; KeyNavigation.tab: groupBox
+                }
+
+                GroupBox {
+                    id: groupBox
+                    width: 150
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 14
+
+                    arrowIcon: "angle-down.png"
+
+                    KeyNavigation.backtab: layoutBox; KeyNavigation.tab: keyboardTestBox
+                }
+
+                TextBox {
+                    id: keyboardTestBox
+                    width: 90
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 14
+
+                    KeyNavigation.backtab: groupBox; KeyNavigation.tab: btnSleep
                 }
             }
 
@@ -256,6 +276,18 @@ Rectangle {
                 spacing: 5
 
                 ImageButton {
+                    id: btnSleep
+                    height: parent.height
+                    source: "sleep.png"
+
+                    visible: sddm.canSleep
+
+                    onClicked: sddm.sleep()
+
+                    KeyNavigation.backtab: keyboardTestBox; KeyNavigation.tab: btnShutdown
+                }
+
+                ImageButton {
                     id: btnReboot
                     height: parent.height
                     source: "reboot.png"
@@ -264,7 +296,7 @@ Rectangle {
 
                     onClicked: sddm.reboot()
 
-                    KeyNavigation.backtab: layoutBox; KeyNavigation.tab: btnShutdown
+                    KeyNavigation.backtab: btnSleep; KeyNavigation.tab: btnShutdown
                 }
 
                 ImageButton {
