@@ -35,7 +35,7 @@ ComboBox {
     Connections {
         target: keyboard
 
-        onCurrentLayoutChanged: combo.index = keyboard.currentGroup
+        onCurrentGroupChanged: combo.index = keyboard.currentGroup
     }
 
     rowDelegate: Rectangle {
