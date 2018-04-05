@@ -240,6 +240,8 @@ Rectangle {
                 LayoutBox {
                     id: layoutBox
                     width: 150
+                    maxHeight: container.height - actionBar.height
+
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: 14
 
@@ -251,6 +253,8 @@ Rectangle {
                 GroupBox {
                     id: groupBox
                     width: 150
+                    maxHeight: container.height - actionBar.height
+
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: 14
 

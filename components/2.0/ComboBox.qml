@@ -23,6 +23,7 @@
 ***************************************************************************/
 
 import QtQuick 2.0
+import QtQuick.Controls 1.4
 
 FocusScope {
     id: container
@@ -41,6 +42,7 @@ FocusScope {
     property int index: 0
     property alias arrowColor: arrow.color
     property alias arrowIcon: arrowIcon.source
+    property int maxHeight: 1000
 
     property Component rowDelegate: defaultRowDelegate
 
@@ -189,18 +191,24 @@ FocusScope {
             }
         }
 
-        ListView {
-            id: listView
-            width: container.width; height: (container.height - 2*container.borderWidth) * count + container.borderWidth
-            delegate: myDelegate
-            highlight: Rectangle {
-                anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined;
-                color: container.hoverColor
+        ScrollView {
+            id: scrollView
+            anchors.fill: parent
+
+            ListView {
+                id: listView
+                width: container.width;
+                height: (container.height - 2*container.borderWidth) * count + container.borderWidth
+                delegate: myDelegate
+                highlight: Rectangle {
+                    anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined;
+                    color: container.hoverColor
+                }
             }
         }
 
         Rectangle {
-            anchors.fill: listView
+            anchors.fill: scrollView
             anchors.topMargin: -container.borderWidth
             color: "transparent"
             clip: false
@@ -211,7 +219,10 @@ FocusScope {
         states: [
             State {
                 name: "visible";
-                PropertyChanges { target: dropDown; height: (container.height - 2*container.borderWidth) * listView.count + container.borderWidth}
+                PropertyChanges {
+                    target: dropDown;
+                    height: Math.min(container.maxHeight, (container.height - 2*container.borderWidth) * listView.count + container.borderWidth)
+                }
             }
         ]
     }
