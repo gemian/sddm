@@ -246,18 +246,9 @@ int main(int argc, char **argv) {
     // install message handler
     qInstallMessageHandler(SDDM::GreeterMessageHandler);
 
-    // HiDPI
-    bool hiDpiEnabled = false;
-    if (QGuiApplication::platformName() == QLatin1String("xcb"))
-        hiDpiEnabled = SDDM::mainConfig.X11.EnableHiDPI.get();
-    else if (QGuiApplication::platformName().startsWith(QLatin1String("wayland")))
-        hiDpiEnabled = SDDM::mainConfig.Wayland.EnableHiDPI.get();
-    if (hiDpiEnabled) {
-        qDebug() << "High-DPI autoscaling Enabled";
-        QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    } else {
-        qDebug() << "High-DPI autoscaling not Enabled";
-    }
+    // HiDPI - ignore configuration settings until fixed upstream
+    qDebug() << "High-DPI autoscaling Enabled";
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QStringList arguments;
 
