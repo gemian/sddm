@@ -87,3 +87,12 @@ Recommends: sddm
 Provides: sddm-theme
 Description: 'Maldives' theme for SDDM X11 display manager
  Maldives theme for SDDM
+
+Package: sddm-theme-maya
+Architecture: all
+Depends: ${misc:Depends}
+Breaks: sddm (<< ${source:Version})
+Recommends: sddm
+Provides: sddm-theme
+Description: 'Maya' theme for SDDM X11 display manager
+ Maya theme for SDDM
