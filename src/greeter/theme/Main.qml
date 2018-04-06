@@ -93,6 +93,8 @@ Rectangle {
                         listView.focus = true;
                     }
                 }
+
+                KeyNavigation.up: keyboardTestBox
             }
         }
 
@@ -225,7 +227,9 @@ Rectangle {
 
                     font.pixelSize: 14
 
-                    KeyNavigation.backtab: nextUser; KeyNavigation.tab: layoutBox
+                    KeyNavigation.backtab: nextUser
+                    KeyNavigation.tab: layoutBox
+                    KeyNavigation.right: layoutBox
                 }
 
                 Text {
@@ -247,7 +251,9 @@ Rectangle {
 
                     arrowIcon: "angle-down.png"
 
-                    KeyNavigation.backtab: session; KeyNavigation.tab: groupBox
+                    KeyNavigation.backtab: session
+                    KeyNavigation.tab: groupBox
+                    KeyNavigation.right: groupBox
                 }
 
                 GroupBox {
@@ -260,7 +266,9 @@ Rectangle {
 
                     arrowIcon: "angle-down.png"
 
-                    KeyNavigation.backtab: layoutBox; KeyNavigation.tab: keyboardTestBox
+                    KeyNavigation.backtab: layoutBox
+                    KeyNavigation.tab: keyboardTestBox
+                    KeyNavigation.right: keyboardTestBox
                 }
 
                 TextBox {
@@ -269,7 +277,9 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     font.pixelSize: 14
 
-                    KeyNavigation.backtab: groupBox; KeyNavigation.tab: btnSleep
+                    KeyNavigation.backtab: groupBox
+                    KeyNavigation.tab: btnSleep
+                    KeyNavigation.right: btnSleep
                 }
             }
 
@@ -288,7 +298,10 @@ Rectangle {
 
                     onClicked: sddm.sleep()
 
-                    KeyNavigation.backtab: keyboardTestBox; KeyNavigation.tab: btnShutdown
+                    KeyNavigation.backtab: keyboardTestBox
+                    KeyNavigation.tab: btnReboot
+                    KeyNavigation.right: btnReboot
+                    KeyNavigation.down: listView
                 }
 
                 ImageButton {
@@ -300,7 +313,10 @@ Rectangle {
 
                     onClicked: sddm.reboot()
 
-                    KeyNavigation.backtab: btnSleep; KeyNavigation.tab: btnShutdown
+                    KeyNavigation.backtab: btnSleep
+                    KeyNavigation.tab: btnShutdown
+                    KeyNavigation.right: btnShutdown
+                    KeyNavigation.down: listView
                 }
 
                 ImageButton {
@@ -312,7 +328,9 @@ Rectangle {
 
                     onClicked: sddm.powerOff()
 
-                    KeyNavigation.backtab: btnReboot; KeyNavigation.tab: prevUser
+                    KeyNavigation.backtab: btnReboot
+                    KeyNavigation.tab: prevUser
+                    KeyNavigation.down: listView
                 }
             }
         }
