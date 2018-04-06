@@ -150,24 +150,24 @@ namespace SDDM {
 
     void XcbKeyboardBackend::initLayouts() {
         d->layouts << new KeyboardLayout(QLatin1String("aa"), QLatin1String("Set by X"));
-        d->layouts << new KeyboardLayout(QLatin1String("gb"), QLatin1String("Gemini English (UK)"));
-        d->layouts << new KeyboardLayout(QLatin1String("us"), QLatin1String("Gemini English (US)"));
-        d->layouts << new KeyboardLayout(QLatin1String("se"), QLatin1String("Gemini Swedish"));
-        d->layouts << new KeyboardLayout(QLatin1String("fi"), QLatin1String("Gemini Finnish"));
-        d->layouts << new KeyboardLayout(QLatin1String("de"), QLatin1String("Gemini German"));
-        d->layouts << new KeyboardLayout(QLatin1String("at"), QLatin1String("Gemini Austrian"));
-        d->layouts << new KeyboardLayout(QLatin1String("fr"), QLatin1String("Gemini French"));
-        d->layouts << new KeyboardLayout(QLatin1String("be"), QLatin1String("Gemini Belgian"));
-        d->layouts << new KeyboardLayout(QLatin1String("pt"), QLatin1String("Gemini Portuguese"));
-        d->layouts << new KeyboardLayout(QLatin1String("ru"), QLatin1String("Gemini Russia"));
-        d->layouts << new KeyboardLayout(QLatin1String("jp"), QLatin1String("Gemini Japan"));
-        d->layouts << new KeyboardLayout(QLatin1String("ara"), QLatin1String("Gemini Arabic"));
-        d->layouts << new KeyboardLayout(QLatin1String("cz"), QLatin1String("Gemini Czech"));
-        d->layouts << new KeyboardLayout(QLatin1String("hr"), QLatin1String("Gemini Croatian"));
-        d->layouts << new KeyboardLayout(QLatin1String("no"), QLatin1String("Gemini Norwegian"));
-        d->layouts << new KeyboardLayout(QLatin1String("dk"), QLatin1String("Gemini Danish"));
-        d->layouts << new KeyboardLayout(QLatin1String("dvorak"), QLatin1String("Gemini English (Dvorak)"));
-        d->layouts << new KeyboardLayout(QLatin1String("gr"), QLatin1String("Gemini Greek"));
+        d->layouts << new KeyboardLayout(QLatin1String("ara"), QLatin1String("Arabic"));
+        d->layouts << new KeyboardLayout(QLatin1String("at"), QLatin1String("Austrian"));
+        d->layouts << new KeyboardLayout(QLatin1String("be"), QLatin1String("Belgian"));
+        d->layouts << new KeyboardLayout(QLatin1String("cz"), QLatin1String("Czech"));
+        d->layouts << new KeyboardLayout(QLatin1String("hr"), QLatin1String("Croatian"));
+        d->layouts << new KeyboardLayout(QLatin1String("dk"), QLatin1String("Danish"));
+        d->layouts << new KeyboardLayout(QLatin1String("dvorak"), QLatin1String("English (Dvorak)"));
+        d->layouts << new KeyboardLayout(QLatin1String("gb"), QLatin1String("English (UK)"));
+        d->layouts << new KeyboardLayout(QLatin1String("us"), QLatin1String("English (US)"));
+        d->layouts << new KeyboardLayout(QLatin1String("fi"), QLatin1String("Finnish"));
+        d->layouts << new KeyboardLayout(QLatin1String("fr"), QLatin1String("French"));
+        d->layouts << new KeyboardLayout(QLatin1String("de"), QLatin1String("German"));
+        d->layouts << new KeyboardLayout(QLatin1String("gr"), QLatin1String("Greek"));
+        d->layouts << new KeyboardLayout(QLatin1String("no"), QLatin1String("Norwegian"));
+        d->layouts << new KeyboardLayout(QLatin1String("pt"), QLatin1String("Portuguese"));
+        d->layouts << new KeyboardLayout(QLatin1String("ru"), QLatin1String("Russia"));
+        d->layouts << new KeyboardLayout(QLatin1String("se"), QLatin1String("Swedish"));
+        d->layouts << new KeyboardLayout(QLatin1String("jp"), QLatin1String("Japan"));
     }
 
     void XcbKeyboardBackend::initGroups() {
