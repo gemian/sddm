@@ -40,6 +40,7 @@ namespace SDDM {
 
         void powerOff() const;
         void reboot() const;
+        void sleep() const;
         void suspend() const;
         void hibernate() const;
         void hybridSleep() const;

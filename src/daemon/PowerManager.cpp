@@ -44,6 +44,7 @@ namespace SDDM {
 
         virtual void powerOff() const = 0;
         virtual void reboot() const = 0;
+        virtual void sleep() const = 0;
         virtual void suspend() const = 0;
         virtual void hibernate() const = 0;
         virtual void hybridSleep() const = 0;
@@ -68,7 +69,7 @@ const QString UPOWER_OBJECT = QStringLiteral("org.freedesktop.UPower");
         }
 
         Capabilities capabilities() const {
-            Capabilities caps = Capability::PowerOff | Capability::Reboot;
+            Capabilities caps = Capability::PowerOff | Capability::Reboot | Capability::Sleep;
 
             QDBusReply<bool> reply;
 
@@ -150,6 +151,11 @@ const QString CK2_OBJECT = QStringLiteral("org.freedesktop.ConsoleKit.Manager");
             if (reply.isValid() && (reply.value() == QLatin1String("yes")))
                 caps |= Capability::Reboot;
 
+            // sleep
+            reply = m_interface->call(QStringLiteral("CanSleep"));
+            if (reply.isValid() && (reply.value() == QLatin1String("yes")))
+                caps |= Capability::Sleep;
+
             // suspend
             reply = m_interface->call(QStringLiteral("CanSuspend"));
             if (reply.isValid() && (reply.value() == QLatin1String("yes")))
@@ -176,6 +182,10 @@ const QString CK2_OBJECT = QStringLiteral("org.freedesktop.ConsoleKit.Manager");
         void reboot() const {
             if (!daemonApp->testing())
                 m_interface->call(QStringLiteral("Reboot"), true);
+        }
+
+        void sleep() const {
+            m_interface->call(QStringLiteral("Sleep"), true);
         }
 
         void suspend() const {
@@ -246,6 +256,18 @@ const QString CK2_OBJECT = QStringLiteral("org.freedesktop.ConsoleKit.Manager");
         for (PowerManagerBackend *backend: m_backends) {
             if (backend->capabilities() & Capability::Reboot) {
                 backend->reboot();
+                break;
+            }
+        }
+    }
+
+    void PowerManager::sleep() const {
+        if (daemonApp->testing())
+            return;
+
+        for (PowerManagerBackend *backend: m_backends) {
+            if (backend->capabilities() & Capability::Sleep) {
+                backend->sleep();
                 break;
             }
         }

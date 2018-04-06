@@ -34,6 +34,7 @@ namespace SDDM {
 
         Q_PROPERTY(QString  hostName        READ hostName       NOTIFY hostNameChanged)
         Q_PROPERTY(bool     canPowerOff     READ canPowerOff    NOTIFY canPowerOffChanged)
+        Q_PROPERTY(bool     canSleep        READ canSleep       NOTIFY canSleepChanged)
         Q_PROPERTY(bool     canReboot       READ canReboot      NOTIFY canRebootChanged)
         Q_PROPERTY(bool     canSuspend      READ canSuspend     NOTIFY canSuspendChanged)
         Q_PROPERTY(bool     canHibernate    READ canHibernate   NOTIFY canHibernateChanged)
@@ -46,6 +47,7 @@ namespace SDDM {
         const QString &hostName() const;
 
         bool canPowerOff() const;
+        bool canSleep() const;
         bool canReboot() const;
         bool canSuspend() const;
         bool canHibernate() const;
@@ -58,6 +60,7 @@ namespace SDDM {
     public slots:
         void powerOff();
         void reboot();
+        void sleep();
         void suspend();
         void hibernate();
         void hybridSleep();
@@ -74,6 +77,7 @@ namespace SDDM {
         void hostNameChanged(const QString &hostName);
         void canPowerOffChanged(bool canPowerOff);
         void canRebootChanged(bool canReboot);
+        void canSleepChanged(bool canSleep);
         void canSuspendChanged(bool canSuspend);
         void canHibernateChanged(bool canHibernate);
         void canHybridSleepChanged(bool canHybridSleep);

@@ -28,6 +28,7 @@ namespace SDDM {
         Login,
         PowerOff,
         Reboot,
+        Sleep,
         Suspend,
         Hibernate,
         HybridSleep
@@ -46,7 +47,8 @@ namespace SDDM {
         Reboot = 0x0002,
         Suspend = 0x0004,
         Hibernate = 0x0008,
-        HybridSleep = 0x0010
+        HybridSleep = 0x0010,
+        Sleep = 0x0020
     };
 
     Q_DECLARE_FLAGS(Capabilities, Capability)
