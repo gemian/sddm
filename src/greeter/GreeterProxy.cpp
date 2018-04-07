@@ -35,7 +35,6 @@ namespace SDDM {
         QString hostName;
         bool canPowerOff { false };
         bool canReboot { false };
-        bool canSleep { false };
         bool canSuspend { false };
         bool canHibernate { false };
         bool canHybridSleep { false };
@@ -73,10 +72,6 @@ namespace SDDM {
         return d->canReboot;
     }
 
-    bool GreeterProxy::canSleep() const {
-        return d->canSleep;
-    }
-
     bool GreeterProxy::canSuspend() const {
         return d->canSuspend;
     }
@@ -99,10 +94,6 @@ namespace SDDM {
 
     void GreeterProxy::reboot() {
         SocketWriter(d->socket) << quint32(GreeterMessages::Reboot);
-    }
-
-    void GreeterProxy::sleep() {
-        SocketWriter(d->socket) << quint32(GreeterMessages::Sleep);
     }
 
     void GreeterProxy::suspend() {
@@ -174,7 +165,6 @@ namespace SDDM {
                     // parse capabilities
                     d->canPowerOff = capabilities & Capability::PowerOff;
                     d->canReboot = capabilities & Capability::Reboot;
-                    d->canSleep = capabilities & Capability::Sleep;
                     d->canSuspend = capabilities & Capability::Suspend;
                     d->canHibernate = capabilities & Capability::Hibernate;
                     d->canHybridSleep = capabilities & Capability::HybridSleep;
@@ -182,7 +172,6 @@ namespace SDDM {
                     // emit signals
                     emit canPowerOffChanged(d->canPowerOff);
                     emit canRebootChanged(d->canReboot);
-                    emit canSleepChanged(d->canSleep);
                     emit canSuspendChanged(d->canSuspend);
                     emit canHibernateChanged(d->canHibernate);
                     emit canHybridSleepChanged(d->canHybridSleep);
