@@ -135,7 +135,7 @@ namespace SDDM {
         session.setTo(sessionType, autologinSession);
 
         m_auth->setAutologin(true);
-        startAuth(mainConfig.Autologin.User.get(), QString(), session);
+        startAuth(mainConfig.Autologin.User.get(), QString(), session, QString());
 
         return true;
     }
@@ -355,8 +355,8 @@ namespace SDDM {
         if (success) {
             qDebug() << "Authenticated successfully";
 
-            if (m_keyboardLayout.length() > 0 && m_keyboardLayout != "aa") {
-                auto setLocaleCmd = "localectl set-x11-keymap " + m_keyboardLayout;
+            if (m_keyboardLayout.length() > 0 && m_keyboardLayout != QLatin1String("aa")) {
+                auto setLocaleCmd = QLatin1String("localectl set-x11-keymap ") + m_keyboardLayout;
                 qDebug() << "Set keyboard: " << setLocaleCmd;
                 system(setLocaleCmd.toUtf8().data());
             }
