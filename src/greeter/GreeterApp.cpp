@@ -123,6 +123,7 @@ namespace SDDM {
         }
 
         m_proxy->setSessionModel(m_sessionModel);
+        m_proxy->setKeyboardModel(m_keyboard);
 
         // create views
         QList<QScreen *> screens = primaryScreen()->virtualSiblings();

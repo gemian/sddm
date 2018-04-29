@@ -70,8 +70,8 @@ namespace SDDM {
         connect(m_displayServer, SIGNAL(stopped()), this, SLOT(stop()));
 
         // connect login signal
-        connect(m_socketServer, SIGNAL(login(QLocalSocket*,QString,QString,Session)),
-                this, SLOT(login(QLocalSocket*,QString,QString,Session)));
+        connect(m_socketServer, SIGNAL(login(QLocalSocket*,QString,QString,Session,QString)),
+                this, SLOT(login(QLocalSocket*,QString,QString,Session,QString)));
 
         // connect login result signals
         connect(this, SIGNAL(loginFailed(QLocalSocket*)), m_socketServer, SLOT(loginFailed(QLocalSocket*)));
@@ -220,7 +220,7 @@ namespace SDDM {
 
     void Display::login(QLocalSocket *socket,
                         const QString &user, const QString &password,
-                        const Session &session) {
+                        const Session &session, const QString &keyboardLayout) {
         m_socket = socket;
 
         //the SDDM user has special privileges that skip password checking so that we can load the greeter
@@ -230,7 +230,7 @@ namespace SDDM {
         }
 
         // authenticate
-        startAuth(user, password, session);
+        startAuth(user, password, session, keyboardLayout);
     }
 
     QString Display::findGreeterTheme() const {
@@ -263,7 +263,7 @@ namespace SDDM {
         return dir.exists(fileName);
     }
 
-    void Display::startAuth(const QString &user, const QString &password, const Session &session) {
+    void Display::startAuth(const QString &user, const QString &password, const Session &session, const QString &keyboardLayout) {
         m_passPhrase = password;
 
         // sanity check
@@ -304,6 +304,8 @@ namespace SDDM {
         // save session desktop file name, we'll use it to set the
         // last session later, in slotAuthenticationFinished()
         m_sessionName = session.fileName();
+
+        m_keyboardLayout = keyboardLayout;
 
         // some information
         qDebug() << "Session" << m_sessionName << "selected, command:" << session.exec();
@@ -352,6 +354,12 @@ namespace SDDM {
     void Display::slotAuthenticationFinished(const QString &user, bool success) {
         if (success) {
             qDebug() << "Authenticated successfully";
+
+            if (m_keyboardLayout.length() > 0 && m_keyboardLayout != "aa") {
+                auto setLocaleCmd = "localectl set-x11-keymap " + m_keyboardLayout;
+                qDebug() << "Set keyboard: " << setLocaleCmd;
+                system(setLocaleCmd.toUtf8().data());
+            }
 
             m_auth->setCookie(qobject_cast<XorgDisplayServer *>(m_displayServer)->cookie());
 

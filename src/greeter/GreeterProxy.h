@@ -26,6 +26,7 @@ class QLocalSocket;
 
 namespace SDDM {
     class SessionModel;
+    class KeyboardModel;
 
     class GreeterProxyPrivate;
     class GreeterProxy : public QObject {
@@ -54,6 +55,7 @@ namespace SDDM {
         bool isConnected() const;
 
         void setSessionModel(SessionModel *model);
+        void setKeyboardModel(KeyboardModel *model);
 
     public slots:
         void powerOff();

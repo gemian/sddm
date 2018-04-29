@@ -23,6 +23,7 @@
 #include "Configuration.h"
 #include "Messages.h"
 #include "SessionModel.h"
+#include "KeyboardModel.h"
 #include "SocketWriter.h"
 
 #include <QLocalSocket>
@@ -31,6 +32,7 @@ namespace SDDM {
     class GreeterProxyPrivate {
     public:
         SessionModel *sessionModel { nullptr };
+        KeyboardModel *keyboardModel { nullptr };
         QLocalSocket *socket { nullptr };
         QString hostName;
         bool canPowerOff { false };
@@ -62,6 +64,10 @@ namespace SDDM {
 
     void GreeterProxy::setSessionModel(SessionModel *model) {
         d->sessionModel = model;
+    }
+
+    void GreeterProxy::setKeyboardModel(KeyboardModel *model) {
+        d->keyboardModel = model;
     }
 
     bool GreeterProxy::canPowerOff() const {
@@ -124,7 +130,8 @@ namespace SDDM {
         Session::Type type = static_cast<Session::Type>(d->sessionModel->data(index, SessionModel::TypeRole).toInt());
         QString name = d->sessionModel->data(index, SessionModel::FileRole).toString();
         Session session(type, name);
-        SocketWriter(d->socket) << quint32(GreeterMessages::Login) << user << password << session;
+        QString keyboardLayout = d->keyboardModel->currentLayoutShortName();
+        SocketWriter(d->socket) << quint32(GreeterMessages::Login) << user << password << session << keyboardLayout;
     }
 
     void GreeterProxy::connected() {

@@ -133,12 +133,12 @@ namespace SDDM {
                 qDebug() << "Message received from greeter: Login";
 
                 // read username, pasword etc.
-                QString user, password, filename;
+                QString user, password, filename, keyboardLayout;
                 Session session;
-                input >> user >> password >> session;
+                input >> user >> password >> session >> keyboardLayout;
 
                 // emit signal
-                emit login(socket, user, password, session);
+                emit login(socket, user, password, session, keyboardLayout);
             }
             break;
             case GreeterMessages::PowerOff: {

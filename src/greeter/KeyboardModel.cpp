@@ -20,6 +20,7 @@
 #include "KeyboardModel.h"
 #include "KeyboardModel_p.h"
 #include "XcbKeyboardBackend.h"
+#include "KeyboardLayout.h"
 
 namespace SDDM {
     /**********************************************/
@@ -135,6 +136,10 @@ namespace SDDM {
 
         if (groups_old != d->groups)
             emit groupsChanged();
+    }
+
+    QString KeyboardModel::currentLayoutShortName() {
+        return ((KeyboardLayout*)d->layouts[d->layout_id])->shortName();
     }
 }
 

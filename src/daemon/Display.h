@@ -59,7 +59,7 @@ namespace SDDM {
 
         void login(QLocalSocket *socket,
                    const QString &user, const QString &password,
-                   const Session &session);
+                   const Session &session, const QString &keyboardLayout);
         bool attemptAutologin();
         void displayServerStarted();
 
@@ -74,7 +74,7 @@ namespace SDDM {
         bool findSessionEntry(const QDir &dir, const QString &name) const;
 
         void startAuth(const QString &user, const QString &password,
-                       const Session &session);
+                       const Session &session, const QString &keyboardLayout);
 
         bool m_relogin { true };
         bool m_started { false };
@@ -85,6 +85,8 @@ namespace SDDM {
 
         QString m_passPhrase;
         QString m_sessionName;
+
+        QString m_keyboardLayout;
 
         Auth *m_auth { nullptr };
         DisplayServer *m_displayServer { nullptr };

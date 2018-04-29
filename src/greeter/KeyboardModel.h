@@ -30,6 +30,7 @@ namespace SDDM {
 
     class KeyboardModel : public QObject {
         Q_OBJECT
+
         Q_DISABLE_COPY(KeyboardModel)
     public:
         // LED control
@@ -49,6 +50,8 @@ namespace SDDM {
     public:
         KeyboardModel();
         virtual ~KeyboardModel();
+
+        QString currentLayoutShortName();
 
     signals:
         void numLockStateChanged();
