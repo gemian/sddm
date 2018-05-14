@@ -28,8 +28,13 @@
 #include <QSocketNotifier>
 
 #include <X11/XKBlib.h>
+#include <QtDBus/QDBusInterface>
 
 namespace SDDM {
+    const QString LEDS_PATH = QStringLiteral("/org/thinkglobally/Gemian/LEDs");
+    const QString LEDS_SERVICE = QStringLiteral("org.thinkglobally.Gemian.LEDs");
+    const QString LEDS_OBJECT = QStringLiteral("org.thinkglobally.Gemian.LEDs");
+
     XcbKeyboardBackend::XcbKeyboardBackend(KeyboardModelPrivate *kmp) : KeyboardBackend(kmp) {
     }
 
@@ -37,6 +42,7 @@ namespace SDDM {
     }
 
     void XcbKeyboardBackend::init() {
+        leds_interface = new QDBusInterface(LEDS_SERVICE, LEDS_PATH, LEDS_OBJECT, QDBusConnection::systemBus());
         connectToDisplay();
         if (d->enabled)
             initLedMap();
@@ -237,6 +243,7 @@ namespace SDDM {
             // Set locks state
             d->capslock.enabled = reply->lockedMods & d->capslock.mask;
             d->numlock.enabled  = reply->lockedMods & d->numlock.mask;
+            updateCapLockState(d->capslock.enabled);
 
             // Set current layout group
             d->group_id = reply->group;
@@ -327,11 +334,16 @@ namespace SDDM {
             // Check event types
             qCritical() << "dispatchEvents - rt: " << event->response_type << ", pad0: " << event->pad0;
             if (event->response_type != 0 && event->pad0 == XCB_XKB_STATE_NOTIFY) {
-                xcb_xkb_state_notify_event_t *e = (xcb_xkb_state_notify_event_t *)event;
+                auto *e = (xcb_xkb_state_notify_event_t *)event;
 
                 // Update state
-                d->capslock.enabled = e->lockedMods & d->capslock.mask;
+                bool newCapsState = e->lockedMods & d->capslock.mask;
                 d->numlock.enabled  = e->lockedMods & d->numlock.mask;
+                if (d->capslock.enabled != newCapsState) {
+                    d->capslock.enabled = newCapsState;
+                    qCritical() << "dispatchEvents - caps: " << d->capslock.enabled;
+                    updateCapLockState(newCapsState);
+                }
 
                 qCritical() << "group " << e->group;
                 d->group_id = e->group;
@@ -412,5 +424,9 @@ namespace SDDM {
             return;
         }
 
+    }
+
+    void XcbKeyboardBackend::updateCapLockState(bool state) {
+        leds_interface->call(QStringLiteral("SetCapsLock"), state);
     }
 }

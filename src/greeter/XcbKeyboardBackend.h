@@ -29,6 +29,7 @@
 #undef explicit
 
 class QSocketNotifier;
+class QDBusInterface;
 
 namespace SDDM {
     class XcbKeyboardBackend : public KeyboardBackend {
@@ -60,11 +61,15 @@ namespace SDDM {
 
         uint8_t getIndicatorMask(uint8_t id) const;
 
+        void updateCapLockState(bool state);
+
         // Connection
         xcb_connection_t *m_conn { nullptr };
 
         // Socket listener
         QSocketNotifier *m_socket { nullptr };
+
+        QDBusInterface *leds_interface { nullptr };
     };
 }
 
