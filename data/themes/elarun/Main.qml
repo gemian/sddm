@@ -245,7 +245,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
 
                 text: textConstants.session
-                font.pixelSize: 14
+                font.pixelSize: 16
                 verticalAlignment: Text.AlignVCenter
             }
 
@@ -261,7 +261,9 @@ Rectangle {
 
                 font.pixelSize: 14
 
-                KeyNavigation.backtab: hibernate_button; KeyNavigation.tab: layoutBox
+                KeyNavigation.backtab: hibernate_button
+                KeyNavigation.tab: layoutBox
+                KeyNavigation.right: layoutBox
             }
 
             Text {
@@ -269,19 +271,48 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
 
                 text: textConstants.layout
-                font.pixelSize: 14
+                font.pixelSize: 16
                 verticalAlignment: Text.AlignVCenter
             }
 
             LayoutBox {
                 id: layoutBox
-                width: 90
+                width: 150
+                maxHeight: container.height - actionBar.height
+
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 14
 
                 arrowIcon: "angle-down.png"
 
-                KeyNavigation.backtab: session; KeyNavigation.tab: user_entry
+                KeyNavigation.backtab: session
+                KeyNavigation.tab: groupBox
+                KeyNavigation.right: groupBox
+            }
+            GroupBox {
+                id: groupBox
+                width: 150
+                maxHeight: container.height - actionBar.height
+
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 14
+
+                arrowIcon: "angle-down.png"
+
+                KeyNavigation.backtab: layoutBox
+                KeyNavigation.tab: keyboardTestBox
+                KeyNavigation.right: keyboardTestBox
+            }
+
+            TextBox {
+                id: keyboardTestBox
+                width: 90
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 14
+
+                KeyNavigation.backtab: groupBox
+                KeyNavigation.tab: btnSleep
+                KeyNavigation.right: btnSleep
             }
         }
     }
