@@ -159,6 +159,7 @@ namespace SDDM {
         d->layouts << new KeyboardLayout(QLatin1String("ara"), QLatin1String("Arabic"));
         d->layouts << new KeyboardLayout(QLatin1String("at"), QLatin1String("Austrian"));
         d->layouts << new KeyboardLayout(QLatin1String("be"), QLatin1String("Belgian"));
+        d->layouts << new KeyboardLayout(QLatin1String("cat"), QLatin1String("Catalan"));
         d->layouts << new KeyboardLayout(QLatin1String("cz"), QLatin1String("Czech"));
         d->layouts << new KeyboardLayout(QLatin1String("hr"), QLatin1String("Croatian"));
         d->layouts << new KeyboardLayout(QLatin1String("dk"), QLatin1String("Danish"));
@@ -175,6 +176,7 @@ namespace SDDM {
         d->layouts << new KeyboardLayout(QLatin1String("pt"), QLatin1String("Portuguese"));
         d->layouts << new KeyboardLayout(QLatin1String("ru"), QLatin1String("Russian"));
         d->layouts << new KeyboardLayout(QLatin1String("se"), QLatin1String("Swedish"));
+        d->layouts << new KeyboardLayout(QLatin1String("es"), QLatin1String("Spanish"));
         d->layouts << new KeyboardLayout(QLatin1String("jp"), QLatin1String("Japan"));
     }
 
