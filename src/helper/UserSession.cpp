@@ -32,6 +32,7 @@
 #include <grp.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sched.h>
 
 namespace SDDM {
     UserSession::UserSession(HelperApp *parent)
@@ -110,6 +111,24 @@ namespace SDDM {
             }
         }
 
+#ifdef Q_OS_LINUX
+        // enter Linux namespaces
+        for (const QString &ns: mainConfig.Namespaces.get()) {
+            qInfo() << "Entering namespace" << ns;
+            int fd = ::open(qPrintable(ns), O_RDONLY);
+            if (fd < 0) {
+                qCritical("open(%s) failed: %s", qPrintable(ns), strerror(errno));
+                exit(Auth::HELPER_OTHER_ERROR);
+            }
+            if (setns(fd, 0) != 0) {
+                qCritical("setns(open(%s), 0) failed: %s", qPrintable(ns), strerror(errno));
+                exit(Auth::HELPER_OTHER_ERROR);
+            }
+            ::close(fd);
+        }
+#endif
+
+        // switch user
         const QByteArray username = qobject_cast<HelperApp*>(parent())->user().toLocal8Bit();
         struct passwd pw;
         struct passwd *rpw;
@@ -133,11 +152,70 @@ namespace SDDM {
             free(buffer);
             exit(Auth::HELPER_OTHER_ERROR);
         }
+
+#ifdef USE_PAM
+
+        // fetch ambient groups from PAM's environment;
+        // these are set by modules such as pam_groups.so
+        int n_pam_groups = getgroups(0, NULL);
+        gid_t *pam_groups = NULL;
+        if (n_pam_groups > 0) {
+            pam_groups = new gid_t[n_pam_groups];
+            if ((n_pam_groups = getgroups(n_pam_groups, pam_groups)) == -1) {
+                qCritical() << "getgroups() failed to fetch supplemental"
+                            << "PAM groups for user:" << username;
+                exit(Auth::HELPER_OTHER_ERROR);
+            }
+        } else {
+            n_pam_groups = 0;
+        }
+
+        // fetch session's user's groups
+        int n_user_groups = 0;
+        gid_t *user_groups = NULL;
+        if (-1 == getgrouplist(username.constData(), pw.pw_gid,
+                               NULL, &n_user_groups)) {
+            user_groups = new gid_t[n_user_groups];
+            if ((n_user_groups = getgrouplist(username.constData(),
+                                              pw.pw_gid, user_groups,
+                                              &n_user_groups)) == -1 ) {
+                qCritical() << "getgrouplist(" << username << ", " << pw.pw_gid
+                            << ") failed";
+                free(buffer);
+                exit(Auth::HELPER_OTHER_ERROR);
+            }
+        }
+
+        // set groups to concatenation of PAM's ambient
+        // groups and the session's user's groups
+        int n_groups = n_pam_groups + n_user_groups;
+        if (n_groups > 0) {
+            gid_t *groups = new gid_t[n_groups];
+            memcpy(groups, pam_groups, (n_pam_groups * sizeof(gid_t)));
+            memcpy((groups + n_pam_groups), user_groups,
+                   (n_user_groups * sizeof(gid_t)));
+
+            // setgroups(2) handles duplicate groups
+            if (setgroups(n_groups, groups) != 0) {
+                qCritical() << "setgroups() failed for user: " << username;
+                free(buffer);
+                exit (Auth::HELPER_OTHER_ERROR);
+            }
+            delete[] groups;
+        }
+        delete[] pam_groups;
+        delete[] user_groups;
+
+#else
+
         if (initgroups(pw.pw_name, pw.pw_gid) != 0) {
             qCritical() << "initgroups(" << pw.pw_name << ", " << pw.pw_gid << ") failed for user: " << username;
             free(buffer);
             exit(Auth::HELPER_OTHER_ERROR);
         }
+
+#endif /* USE_PAM */
+
         if (setuid(pw.pw_uid) != 0) {
             qCritical() << "setuid(" << pw.pw_uid << ") failed for user: " << username;
             free(buffer);
