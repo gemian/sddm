@@ -196,6 +196,7 @@ namespace SDDM {
             if (displayNumber.size() < 2) {
                 // X server gave nothing (or a whitespace).
                 qCritical("Failed to read display number from pipe");
+                qDebug() << QString::fromLocal8Bit(displayNumber) << displayNumber.isEmpty();
 
                 close(pipeFds[0]);
                 return false;
