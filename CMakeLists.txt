@@ -98,7 +98,7 @@ find_package(XKB REQUIRED)
 find_package(X11 REQUIRED)
 
 # Qt 5
-find_package(Qt5 5.8.0 CONFIG REQUIRED Core DBus Gui Qml Quick LinguistTools Test)
+find_package(Qt5 5.7.1 CONFIG REQUIRED Core DBus Gui Qml Quick LinguistTools Test)
 
 # find qt5 imports dir
 get_target_property(QMAKE_EXECUTABLE Qt5::qmake LOCATION)
