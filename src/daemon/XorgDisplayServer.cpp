@@ -187,20 +187,21 @@ namespace SDDM {
             QFile readPipe;
 
             if (!readPipe.open(pipeFds[0], QIODevice::ReadOnly)) {
-                qCritical("Failed to open pipe to start X Server ");
+                qCritical("Failed to open pipe to start X Server");
 
                 close(pipeFds[0]);
                 return false;
             }
             QByteArray displayNumber = readPipe.readLine();
-            if (displayNumber.isEmpty()) {
-                // the file descriptor was closed without a display number,
-                // the X has probably died.
+            if (displayNumber.size() < 2) {
+                // X server gave nothing (or a whitespace).
+                qCritical("Failed to read display number from pipe");
+
                 close(pipeFds[0]);
                 return false;
             }
             displayNumber.prepend(QByteArray(":"));
-            displayNumber.remove(displayNumber.size() -1, 1); //trim trailing whitespace
+            displayNumber.remove(displayNumber.size() -1, 1); // trim trailing whitespace
             m_display = QString::fromLocal8Bit(displayNumber);
 
             // close our pipe

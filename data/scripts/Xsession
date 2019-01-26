@@ -39,6 +39,7 @@ case $SHELL in
     rm -f $xsess_tmp
     ;;
   */fish)
+    [ -f /etc/profile ] && . /etc/profile
     xsess_tmp=`mktemp /tmp/xsess-env-XXXXXX`
     $SHELL --login -c "/bin/sh -c 'export -p' > $xsess_tmp"
     . $xsess_tmp
@@ -94,7 +95,7 @@ if [ -f "$USERXSESSION" ]; then
   . "$USERXSESSION"
 fi
 
-if [ -z "$@" ]; then
+if [ -z "$*" ]; then
     exec xmessage -center -buttons OK:0 -default OK "Sorry, $DESKTOP_SESSION is no valid session."
 else
     exec $@

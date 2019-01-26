@@ -85,6 +85,7 @@ namespace SDDM {
 
         QString m_passPhrase;
         QString m_sessionName;
+        QString m_reuseSessionId;
 
         QString m_keyboardLayout;
 
