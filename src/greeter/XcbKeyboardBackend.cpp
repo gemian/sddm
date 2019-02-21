@@ -176,6 +176,7 @@ namespace SDDM {
         d->layouts << new KeyboardLayout(QLatin1String("no"), QLatin1String("Norwegian"));
         d->layouts << new KeyboardLayout(QLatin1String("pt"), QLatin1String("Portuguese"));
         d->layouts << new KeyboardLayout(QLatin1String("ru"), QLatin1String("Russian"));
+        d->layouts << new KeyboardLayout(QLatin1String("sk"), QLatin1String("Slovak"));
         d->layouts << new KeyboardLayout(QLatin1String("se"), QLatin1String("Swedish"));
         d->layouts << new KeyboardLayout(QLatin1String("es"), QLatin1String("Spanish"));
         d->layouts << new KeyboardLayout(QLatin1String("jp"), QLatin1String("Japan"));
