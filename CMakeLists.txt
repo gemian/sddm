@@ -101,9 +101,8 @@ find_package(X11 REQUIRED)
 find_package(Qt5 5.8.0 CONFIG REQUIRED Core DBus Gui Qml Quick LinguistTools Test)
 
 # find qt5 imports dir
-get_target_property(QMAKE_EXECUTABLE Qt5::qmake LOCATION)
 if(NOT QT_IMPORTS_DIR)
-    exec_program(${QMAKE_EXECUTABLE} ARGS "-query QT_INSTALL_QML" RETURN_VALUE return_code OUTPUT_VARIABLE QT_IMPORTS_DIR)
+    set(QT_IMPORTS_DIR "/usr/lib/aarch64-linux-gnu/qt5/qml")
 endif()
 
 # Uninstall target
